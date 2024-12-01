@@ -54,7 +54,6 @@ const CryptoSymbols = () => {
             color: crypto.color,
             zIndex: 1,
             fontWeight: 700,
-            mixBlendMode: "screen", // You can experiment with other blend modes or remove it.
           }}
           initial={{
             x: Math.random() * window.innerWidth,

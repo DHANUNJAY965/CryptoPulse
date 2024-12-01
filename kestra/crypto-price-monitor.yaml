@@ -1,0 +1,186 @@
+id: crypto-price-monitor
+namespace: crypto.monitoring
+
+tasks:
+  - id: fetch-crypto-prices
+    type: io.kestra.core.tasks.scripts.Python
+    envs:
+      DB_CONNECTION_STRING: "${DB_CONNECTION_STRING}"
+    script: |
+      import psycopg2
+      import requests
+      import json
+      import os
+
+      # Database connection function
+      def get_db_connection():
+          conn_string = os.environ.get('DB_CONNECTION_STRING')
+          if not conn_string:
+              raise ValueError("Database connection string not provided")
+          return psycopg2.connect(conn_string)
+
+      # Fetch crypto prices from API
+      def get_crypto_prices():
+          try:
+              response = requests.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,dogecoin&vs_currencies=usd')
+              return response.json()
+          except Exception as e:
+              print(f"Error fetching prices: {e}")
+              return {}
+
+      # Retrieve active watchlist items from database
+      def load_watchlist():
+          conn = get_db_connection()
+          try:
+              cur = conn.cursor()
+              cur.execute("""
+                  SELECT 
+                      user_id, 
+                      symbol, 
+                      email, 
+                      threshold_type, 
+                      min_threshold, 
+                      max_threshold 
+                  FROM crypto_watchlist 
+                  WHERE is_active = true
+              """)
+              return [
+                  {
+                      'userId': row[0],
+                      'symbol': row[1],
+                      'email': row[2],
+                      'thresholdType': row[3],
+                      'minThreshold': row[4],
+                      'maxThreshold': row[5]
+                  } for row in cur.fetchall()
+              ]
+          finally:
+              conn.close()
+
+      # Main price monitoring logic
+      def monitor_prices():
+          prices = get_crypto_prices()
+          watchlist = load_watchlist()
+          alerts = []
+
+          for item in watchlist:
+              symbol = item['symbol']
+              api_symbol = symbol.lower()
+              
+              if api_symbol in prices:
+                  current_price = prices[api_symbol]['usd']
+                  
+                  # Threshold checking logic
+                  alert = False
+                  alert_reason = ""
+                  
+                  if item.get('minThreshold') and current_price <= item['minThreshold']:
+                      alert = True
+                      alert_reason = "below minimum"
+                  
+                  if item.get('maxThreshold') and current_price >= item['maxThreshold']:
+                      alert = True
+                      alert_reason = "above maximum"
+                  
+                  if alert:
+                      alerts.append({
+                          'userId': item['userId'],
+                          'email': item['email'],
+                          'symbol': symbol,
+                          'currentPrice': current_price,
+                          'thresholdType': item['thresholdType'],
+                          'alertReason': alert_reason
+                      })
+
+          # Save alerts for further processing
+          with open('/tmp/crypto_alerts.json', 'w') as f:
+              json.dump(alerts, f)
+
+      # Execute monitoring
+      monitor_prices()
+
+  - id: process-alerts
+    type: io.kestra.core.tasks.scripts.Python
+    envs:
+      DB_CONNECTION_STRING: "${DB_CONNECTION_STRING}"
+      EMAIL_SERVICE_PASSWORD: "${EMAIL_SERVICE_PASSWORD}"
+    script: |
+      import json
+      import psycopg2
+      import smtplib
+      from email.mime.text import MIMEText
+      from email.mime.multipart import MIMEMultipart
+      import os
+
+      # Database connection function
+      def get_db_connection():
+          conn_string = os.environ.get('DB_CONNECTION_STRING')
+          if not conn_string:
+              raise ValueError("Database connection string not provided")
+          return psycopg2.connect(conn_string)
+
+      # Read alerts
+      with open('/tmp/crypto_alerts.json', 'r') as f:
+          alerts = json.load(f)
+
+      # Send email for each alert
+      def send_email(alert):
+          sender_email = "alerts@cryptomonitor.com"
+          sender_password = os.environ.get('EMAIL_SERVICE_PASSWORD')
+
+          msg = MIMEMultipart()
+          msg['From'] = sender_email
+          msg['To'] = alert['email']
+          msg['Subject'] = f"Crypto Price Alert for {alert['symbol']}"
+
+          body = f"""
+          Crypto Price Alert!
+
+          {alert['symbol'].capitalize()} has {alert['alertReason']} your threshold.
+
+          Current Price: ${alert['currentPrice']}
+          Threshold Type: {alert['thresholdType']}
+          """
+
+          msg.attach(MIMEText(body, 'plain'))
+
+          # Log alert in database
+          conn = get_db_connection()
+          try:
+              cur = conn.cursor()
+              cur.execute("""
+                  INSERT INTO crypto_alerts 
+                  (user_id, symbol, current_price, alert_type, email_sent_at) 
+                  VALUES (%s, %s, %s, %s, NOW())
+              """, (
+                  alert['userId'], 
+                  alert['symbol'], 
+                  alert['currentPrice'], 
+                  alert['alertReason']
+              ))
+              conn.commit()
+          except Exception as e:
+              print(f"Failed to log alert: {e}")
+              conn.rollback()
+          finally:
+              conn.close()
+
+          # Send email
+          try:
+              server = smtplib.SMTP('smtp.gmail.com', 587)
+              server.starttls()
+              server.login(sender_email, sender_password)
+              server.send_message(msg)
+              server.quit()
+              print(f"Alert sent to {alert['email']}")
+          except Exception as e:
+              print(f"Failed to send email: {e}")
+
+      # Process all alerts
+      for alert in alerts:
+          send_email(alert)
+
+  - id: every-5-minutes
+    type: io.kestra.core.triggers.Cron
+    config:
+      cron: "*/5 * * * *"
