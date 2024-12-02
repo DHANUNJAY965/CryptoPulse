@@ -13,6 +13,7 @@ interface BlockchainItem {
   blockchainId: string;
   name: string;
   lowThreshold: number;
+  logo: string;
   highThreshold: number;
   userId: string;
   currentValue?: number;
@@ -59,6 +60,7 @@ function Dashboard() {
               name: item.name,
               thresholdMin: item.lowThreshold,
               thresholdMax: item.highThreshold,
+              logo: item.logo,
               userId: item.userId,
               currentValue: 94000,
             };

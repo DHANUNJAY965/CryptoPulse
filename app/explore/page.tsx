@@ -102,6 +102,7 @@ export default function BlockchainExplorerPage() {
           ...data,
           name: selectedBlockchain?.name,
           symbol: selectedBlockchain?.symbol,
+          logo: selectedBlockchain?.image
         }),
       });
   

@@ -33,7 +33,7 @@ export function useBlockchainSearch(itemsPerPage: number = 20) {
       setBlockchains(prev => {
         if (reset) return data;
         
-        // Remove duplicates when adding new data
+        
         const newBlockchains = [...prev];
         data.forEach(blockchain => {
           if (!newBlockchains.some(existing => existing.id === blockchain.id)) {

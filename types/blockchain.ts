@@ -5,9 +5,12 @@ export interface Blockchain {
     image: string;
     current_price: number;
     price_change_percentage_24h: number;
+    logo:string;
   }
   
-// interface
+
+  
+  //ThresholdData interface
   export interface ThresholdData {
     blockchainId: string;
     upperThreshold: number;

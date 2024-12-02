@@ -108,5 +108,6 @@ function mapCoinToBlockchain(coin: any): Blockchain {
     image: coin.image || '',
     current_price: typeof coin.current_price === 'number' ? coin.current_price : 0,
     price_change_percentage_24h: typeof coin.price_change_percentage_24h === 'number' ? coin.price_change_percentage_24h : 0,
+    logo: coin.logo || '',
   };
 }
