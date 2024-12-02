@@ -47,10 +47,17 @@ export async function POST(req: Request) {
       );
     }
 
+    const userdetails = await db.collection("users").findOne({
+      email: session.user.email
+    });
+
+    console.log("here are the user details : ",userdetails);
+
     // Add blockchain to watchlist
     const newEntry = {
       userId: session.user.id,
       blockchainId,
+      email: userdetails.email,
       name,
       symbol,
       lowThreshold: Number(lowThreshold),
