@@ -13,13 +13,13 @@ export async function POST(req: Request) {
     }
 
     const data = await req.json();
-    console.log("Received data:", data);
+    // console.log("Received data:", data);
     
     const { blockchainId, name, symbol, lowThreshold, highThreshold, notifications } = data;
     
     // Validate required fields
     if (!blockchainId || !name || !symbol || lowThreshold === undefined || highThreshold === undefined) {
-      console.log("Missing required fields:", { blockchainId, name, symbol, lowThreshold, highThreshold });
+      // console.log("Missing required fields:", { blockchainId, name, symbol, lowThreshold, highThreshold });
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -58,10 +58,10 @@ export async function POST(req: Request) {
       notifications,
       createdAt: new Date(),
     };
-    console.log("Attempting to insert:", newEntry);
+    // console.log("Attempting to insert:", newEntry);
 
     const result = await db.collection("thresholds").insertOne(newEntry);
-    console.log("Insert result:", result);
+    // console.log("Insert result:", result);
 
     return NextResponse.json(
       { 

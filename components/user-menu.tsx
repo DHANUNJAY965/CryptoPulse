@@ -54,13 +54,7 @@ import { useRouter } from "next/navigation";
             <LayoutDashboard className="mr-2 h-4 w-4" />
             Dashboard
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => alert("Help Section")}
-            className="hover:bg-primary hover:text-primary-foreground"
-          >
-            <HelpCircle className="mr-2 h-4 w-4" />
-            About
-          </DropdownMenuItem>
+          
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={onLogout}

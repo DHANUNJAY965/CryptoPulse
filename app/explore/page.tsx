@@ -85,43 +85,11 @@ export default function BlockchainExplorerPage() {
       setShowThresholdForm(true);
     }
   };
-
-  // const handleThresholdSubmit = async (data: any) => {
-  //   try {
-  //     const response = await fetch("/api/user", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         ...data,
-  //         name: selectedBlockchain?.name,
-  //         symbol: selectedBlockchain?.symbol,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       console.log("reached page handle last step end point ui",data);
-  //       throw new Error("Failed to add blockchain to watchlist");
-  //     }
-
-  //     setWatchlist(prev => [...prev, data.blockchainId]);
-  //     toast({
-  //       title: "Success",
-  //       description: `${selectedBlockchain?.name} added to your watchlist`,
-  //     });
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to add blockchain to watchlist",
-  //       variant: "destructive",
-  //     });
-  //   } finally {
-  //     setShowThresholdForm(false);
-  //     setSelectedBlockchain(null);
-  //   }
-  // };
-
+  const handleSignIn = () => {
+    console.log("Sign in clicked");
+    setShowAuthDialog(true); 
+  };
+  
 
   const handleThresholdSubmit = async (data: any) => {
     try {
@@ -140,7 +108,7 @@ export default function BlockchainExplorerPage() {
       const responseData = await response.json();
   
       if (!response.ok) {
-        console.log("Error response:", responseData);
+        // console.log("Error response:", responseData);
         throw new Error(responseData.error || "Failed to add blockchain to watchlist");
       }
   
@@ -166,9 +134,10 @@ export default function BlockchainExplorerPage() {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="min-h-screen bg-background">
         <Navbar 
-          userName={session?.user?.name || "User"} 
+          userName={session?.user?.name} onSignIn={handleSignIn}
           onLogout={() => signOut()} 
         />
+       
 
         <main className="container mx-auto px-4 pt-20">
           <div className="sticky top-16 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4">

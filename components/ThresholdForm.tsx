@@ -74,7 +74,7 @@ export function ThresholdForm({ blockchain, onSubmit, onClose }: ThresholdFormPr
       };
       
       // Log the data being sent
-      console.log('Submitting data:', data);
+      // console.log('Submitting data:', data);
       
       onSubmit(data);
     }

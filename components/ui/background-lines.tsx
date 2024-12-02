@@ -1,7 +1,8 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export const BackgroundLines = ({
   children,
@@ -38,11 +39,29 @@ const pathVariants = {
 };
 
 const CryptoSymbols = () => {
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateSize = () =>
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      updateSize(); // Initial size
+      window.addEventListener("resize", updateSize);
+
+      return () => window.removeEventListener("resize", updateSize);
+    }
+  }, []);
+
   const symbols = [
     { symbol: "₿", color: "#F7931A", weight: 1 }, // Bitcoin
     { symbol: "Ξ", color: "#627EEA", weight: 0.8 }, // Ethereum
     { symbol: "◎", color: "#14F195", weight: 0.9 }, // Solana
   ];
+
+  if (!windowSize.width || !windowSize.height) return null;
 
   return (
     <>
@@ -56,21 +75,21 @@ const CryptoSymbols = () => {
             fontWeight: 700,
           }}
           initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * windowSize.width,
+            y: Math.random() * windowSize.height,
             rotate: 0,
             scale: crypto.weight,
           }}
           animate={{
             x: [
-              Math.random() * window.innerWidth,
-              Math.random() * window.innerWidth,
-              Math.random() * window.innerWidth,
+              Math.random() * windowSize.width,
+              Math.random() * windowSize.width,
+              Math.random() * windowSize.width,
             ],
             y: [
-              Math.random() * window.innerHeight,
-              Math.random() * window.innerHeight,
-              Math.random() * window.innerHeight,
+              Math.random() * windowSize.height,
+              Math.random() * windowSize.height,
+              Math.random() * windowSize.height,
             ],
             rotate: [0, 360, 0],
             scale: [crypto.weight, crypto.weight * 1.1, crypto.weight],
@@ -145,53 +164,26 @@ const SVG = ({
   ];
   return (
     <motion.svg
+      className="absolute top-0 left-0 w-full h-full"
       viewBox="0 0 1440 900"
-      fill="none"
+      preserveAspectRatio="xMidYMid slice"
       xmlns="http://www.w3.org/2000/svg"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      className="absolute inset-0 w-full h-full"
     >
-      {paths.map((path, idx) => (
+      {paths.map((path, index) => (
         <motion.path
+          key={index}
           d={path}
-          stroke={colors[idx]}
-          strokeWidth="2.3"
-          strokeLinecap="round"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
           variants={pathVariants}
           initial="initial"
           animate="animate"
           transition={{
-            duration: svgOptions?.duration || 10,
-            ease: "linear",
+            duration: svgOptions?.duration || 30,
             repeat: Infinity,
             repeatType: "loop",
-            delay: Math.floor(Math.random() * 10),
-            repeatDelay: Math.floor(Math.random() * 10 + 2),
           }}
-          key={`path-first-${idx}`}
-        />
-      ))}
-
-      {paths.map((path, idx) => (
-        <motion.path
-          d={path}
-          stroke={colors[idx]}
-          strokeWidth="2.3"
-          strokeLinecap="round"
-          variants={pathVariants}
-          initial="initial"
-          animate="animate"
-          transition={{
-            duration: svgOptions?.duration || 10,
-            ease: "linear",
-            repeat: Infinity,
-            repeatType: "loop",
-            delay: Math.floor(Math.random() * 10),
-            repeatDelay: Math.floor(Math.random() * 10 + 2),
-          }}
-          key={`path-second-${idx}`}
         />
       ))}
     </motion.svg>

@@ -15,7 +15,7 @@ export function BlockchainCardHeader({
 }: BlockchainCardHeaderProps)
  {
   let router=useRouter();
-  console.log(name);
+  // console.log(name);
   return (
     <div className="flex items-start justify-between mb-4"
     onClick={()=>{
