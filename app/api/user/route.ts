@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       email: session.user.email
     });
 
-    console.log("here are the user details : ",userdetails);
+    // console.log("here are the user details : ",userdetails);
 
     // Add blockchain to watchlist
     const newEntry = {
