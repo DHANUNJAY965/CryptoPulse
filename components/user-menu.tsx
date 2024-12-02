@@ -5,10 +5,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
-  import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+  import { Avatar, AvatarFallback ,AvatarImage} from "@/components/ui/avatar"
   import { Settings, LogOut, LayoutDashboard, HelpCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-  
+import { useSession } from "next-auth/react";
   interface UserMenuProps {
     userName: string;
     onLogout: () => void;
@@ -28,7 +28,9 @@ import { useRouter } from "next/navigation";
       .map((n) => n[0])
       .join("")
       .toUpperCase();
-  
+      const { data: session } = useSession();
+      
+      // console.log("the sessioyn is :",session);
     return (
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -36,9 +38,12 @@ import { useRouter } from "next/navigation";
           aria-label="User menu dropdown"
         >
           <Avatar className="h-8 w-8 hover:ring-2 hover:ring-primary transition-all">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
-            </AvatarFallback>
+            {session?.user?.image ? (
+            <AvatarImage src={session?.user?.image} alt="User Avatar" />
+          ) : (<AvatarFallback className="bg-primary text-primary-foreground">
+            {initials}
+          </AvatarFallback>)}
+            
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">

@@ -147,7 +147,7 @@ export function ThresholdForm({ blockchain, onSubmit, onClose }: ThresholdFormPr
               type="submit" 
               disabled={!isValid}
             >
-              Add to Watchlist
+              Set Price Alerts
             </Button>
           </div>
         </form>

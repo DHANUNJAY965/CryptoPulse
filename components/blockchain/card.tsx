@@ -51,7 +51,7 @@ export function BlockchainCard({
             onClick={onAdd}
             disabled={isAdded}
           >
-            {isAdded ? "Added to Watchlist" : "Add to Watchlist"}
+            {isAdded ? "Set Price Alerts" : "Set Price Alerts"}
           </Button>
         </CardFooter>
       </Card>
