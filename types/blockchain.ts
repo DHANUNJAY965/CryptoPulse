@@ -7,6 +7,7 @@ export interface Blockchain {
     price_change_percentage_24h: number;
   }
   
+// interface
   export interface ThresholdData {
     blockchainId: string;
     upperThreshold: number;
