@@ -1,12 +1,13 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import Navbar from "@/components/ui/Navbar";
+import { Navbar } from "@/components/Navbar";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import axios from "axios";
 import CryptoHoverEffect from "@/components/ui/card-hover-effect";
+import { AuthDialog } from "@/components/auth-dialog";
 
 // Type definition for blockchain item from API
 interface BlockchainItem {
@@ -41,6 +42,7 @@ function Dashboard() {
   });
 
   const [blockchains, setBlockchains] = useState<DashboardHoverItem[]>([]);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
   
   const { toast } = useToast();
 
@@ -58,6 +60,7 @@ function Dashboard() {
               logo: item.logo,
               userId: item.userId,
               symbol: item.symbol || "",
+              currentValue: item.currentValue || 0,
             };
           });
           setBlockchains(data);
@@ -74,18 +77,46 @@ function Dashboard() {
     };
 
     fetchBlockchains();
-  }, []);
+  }, [toast]);
+
+  const handleSignIn = () => {
+    console.log("Sign in clicked");
+    setShowAuthDialog(true);
+  };
 
   return (
-    <BackgroundLines>
-      <Navbar />
-      <div className="container pt-[6rem] mx-auto py-8">
-        <h1 className="text-4xl font-bold mb-8">
-          Welcome to dashboard {session?.user?.name}!
-        </h1>
-        <CryptoHoverEffect items={blockchains} />
-      </div>
-    </BackgroundLines>
+    <div className="min-h-screen bg-background">
+      <Navbar 
+        userName={session?.user?.name}
+        onSignIn={handleSignIn}
+        onLogout={() => signOut()}
+      />
+      
+      <BackgroundLines>
+        <div className="container pt-24 mx-auto py-8">
+          <h1 className="text-4xl font-bold mb-8">
+            Welcome to dashboard{session?.user?.name ? `, ${session.user.name}` : ''}!
+          </h1>
+          {blockchains.length > 0 ? (
+            <CryptoHoverEffect items={blockchains} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-xl text-muted-foreground">No cryptocurrency alerts set up yet.</p>
+              <p className="mt-2">Visit the explorer to add some cryptocurrencies to your watchlist.</p>
+            </div>
+          )}
+        </div>
+      </BackgroundLines>
+
+      {showAuthDialog && (
+        <AuthDialog 
+          onClose={() => setShowAuthDialog(false)} 
+          onSuccessfulAuth={() => {
+            setShowAuthDialog(false);
+          }}
+        />
+      )}
+    </div>
   );
 }
 
