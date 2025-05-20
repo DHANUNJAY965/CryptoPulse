@@ -21,9 +21,9 @@ export async function GET(req: Request) {
 
     return NextResponse.json(watchlist, { status: 200 });
   } catch (error) {
-    console.error("Get watchlist error:", error);
+    console.error("Get price alerts error:", error);
     return NextResponse.json(
-      { error: "Failed to retrieve the watchlist" },
+      { error: "Error retrieving your price alerts." },
       { status: 500 }
     );
   }

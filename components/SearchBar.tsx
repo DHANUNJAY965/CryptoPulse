@@ -104,7 +104,7 @@ export function SearchBar({ value, onChange, onSubmit, isLoading }: SearchBarPro
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
         <Input
           type="text"
-          placeholder="Search by blockchain name, symbol, or ID..."
+          placeholder="Search by blockchain or token name"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}

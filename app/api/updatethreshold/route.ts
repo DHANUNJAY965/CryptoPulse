@@ -23,7 +23,7 @@ export async function PUT(req: Request) {
 
     if (!existingBlockchain) {
       return NextResponse.json(
-        { error: "Blockchain not found in watchlist" },
+        { error: "Blockchain not found in price alerts" },
         { status: 404 }
       );
     }
@@ -55,9 +55,9 @@ export async function PUT(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Update watchlist error:", error);
+    console.error("Error updating blockchain price alert:", error);
     return NextResponse.json(
-      { error: "Failed to update blockchain in watchlist" },
+      { error: "Couldn’t update price alert for this blockchain." },
       { status: 500 }
     );
   }

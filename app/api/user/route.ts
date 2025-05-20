@@ -15,10 +15,10 @@ export async function POST(req: Request) {
     const data = await req.json();
     // console.log("Received data:", data);
     
-    const { blockchainId, name, symbol,logo, lowThreshold, highThreshold, notifications } = data;
+    const { blockchainId, name, symbol,logo, targetPrice, alertMode } = data;
       console.log(logo);
     // Validate required fields
-    if (!blockchainId || !logo || !name || !symbol || lowThreshold === undefined || highThreshold === undefined) {
+    if (!blockchainId || !logo || !name || !symbol || targetPrice === undefined || alertMode === undefined) {
       // console.log("Missing required fields:", { blockchainId, name, symbol, lowThreshold, highThreshold });
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         existing: existingBlockchain
       });
       return NextResponse.json(
-        { error: "Blockchain already in watchlist" },
+        { error: "Price alert already set for this blockchain." },
         { status: 400 }
       );
     }
@@ -61,9 +61,8 @@ export async function POST(req: Request) {
       name,
       symbol,
       logo,
-      lowThreshold: Number(lowThreshold),
-      highThreshold: Number(highThreshold),
-      notifications,
+      targetPrice: Number(targetPrice),
+      alertMode,
       createdAt: new Date(),
     };
     // console.log("Attempting to insert:", newEntry);
@@ -73,16 +72,16 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       { 
-        message: "Blockchain added to watchlist successfully",
+        message: "Blockchain successfully added for price alerts.",
         data: result
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Add to watchlist error:", error);
+    console.error("Error adding blockchain to price alerts:", error);
     return NextResponse.json(
       { 
-        error: "Failed to add blockchain to watchlist",
+        error: "Error adding blockchain to price alerts.",
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }

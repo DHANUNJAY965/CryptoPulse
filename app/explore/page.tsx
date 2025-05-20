@@ -93,6 +93,7 @@ export default function BlockchainExplorerPage() {
 
   const handleThresholdSubmit = async (data: any) => {
     try {
+      console.log("Submitting threshold data:", data);
       const response = await fetch("/api/user", {
         method: "POST",
         headers: {
@@ -110,16 +111,16 @@ export default function BlockchainExplorerPage() {
   
       if (!response.ok) {
         // console.log("Error response:", responseData);
-        throw new Error(responseData.error || "Failed to add blockchain to watchlist");
+        throw new Error(responseData.error || "Couldn’t set up price alert for the selected blockchain.");
       }
   
       setWatchlist(prev => [...prev, data.blockchainId]);
       toast({
         title: "Success",
-        description: `${selectedBlockchain?.name} added to your watchlist`,
+        description: `${selectedBlockchain?.name} added for price alerts.`,
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to add blockchain to watchlist";
+      const errorMessage = error instanceof Error ? error.message : "Couldn’t set up price alert for the selected blockchain.";
       toast({
         title: "Error",
         description: errorMessage,
@@ -227,6 +228,7 @@ export default function BlockchainExplorerPage() {
                 setShowThresholdForm(false);
                 setSelectedBlockchain(null);
               }}
+              
             />
           )}
         </AnimatePresence>
