@@ -30,7 +30,7 @@ export function UserMenu({
     .toUpperCase();
     const { data: session } = useSession();
     
-    console.log("the session is :",session);
+    // console.log("the session is :",session);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
