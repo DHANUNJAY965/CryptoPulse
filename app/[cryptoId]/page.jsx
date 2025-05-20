@@ -26,6 +26,10 @@ import navLogo from "../images/cryptocurrencies.png";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/ui/Navbar";
+import { ThresholdForm } from "@/components/ThresholdForm";
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+import { AnimatePresence } from "framer-motion";
 
 const timeframes = [
   { label: "24H", value: "1", days: "1" },
@@ -45,6 +49,13 @@ const CryptoDetailView = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("7");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { data: session } = useSession();
+  const { toast } = useToast();
+
+  // State for threshold form
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [showThresholdForm, setShowThresholdForm] = useState(false);
+  const [watchlist, setWatchlist] = useState([]);
 
   const formatPrice = (price) => {
     if (price < 0.01) return price.toFixed(8);
@@ -132,6 +143,58 @@ const CryptoDetailView = () => {
     fetchPriceHistory();
   }, [cryptoId, selectedTimeframe, currency]);
 
+  const handleAddPriceAlert = () => {
+    if (!session) {
+      setShowAuthDialog(true);
+    } else {
+      setShowThresholdForm(true);
+    }
+  };
+
+  const handleThresholdSubmit = async (data) => {
+    try {
+      const response = await fetch("/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          name: cryptoData.name,
+          symbol: cryptoData.symbol,
+          logo: cryptoData.image.small,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.error ||
+            "Couldn't set up price alert for the selected blockchain."
+        );
+      }
+
+      setWatchlist((prev) => [...prev, data.blockchainId]);
+      toast({
+        title: "Success",
+        description: `${cryptoData.name} added for price alerts.`,
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Couldn't set up price alert for the selected blockchain.";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setShowThresholdForm(false);
+    }
+  };
+
   if (isLoading && !cryptoData) {
     return (
       <div className="flex items-center justify-center min-h-screen dark:bg-gray-900">
@@ -204,7 +267,10 @@ const CryptoDetailView = () => {
               </p>
             </div>
           </div>
-          <Button className="dark:bg-white dark:text-black bg-black text-white hover:none">
+          <Button
+            className="dark:bg-white dark:text-black bg-black text-white hover:bg-gray-800 dark:hover:bg-gray-200"
+            onClick={handleAddPriceAlert}
+          >
             Add to Price Alerts
           </Button>
         </div>
@@ -282,7 +348,6 @@ const CryptoDetailView = () => {
                 {timeframes.map((timeframe) => (
                   <Button
                     key={timeframe.value}
-                    // variant="outline"
                     className={
                       "dark:text-slate-700 border-2 border-black dark:border-white dark:hover:border-black hover:bg-white hover:text-black hover:dark:bg-black hover:dark:text-white" +
                       `${
@@ -446,6 +511,32 @@ const CryptoDetailView = () => {
           </Card>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showAuthDialog && (
+          <AuthDialog
+            onClose={() => setShowAuthDialog(false)}
+            onSuccessfulAuth={() => {
+              setShowAuthDialog(false);
+              setShowThresholdForm(true);
+            }}
+          />
+        )}
+
+        {showThresholdForm && cryptoData && (
+          <ThresholdForm
+            blockchain={{
+              id: cryptoId,
+              name: cryptoData.name,
+              symbol: cryptoData.symbol,
+              current_price: cryptoData.market_data.current_price[currency],
+              image: cryptoData.image.small,
+            }}
+            onSubmit={handleThresholdSubmit}
+            onClose={() => setShowThresholdForm(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
