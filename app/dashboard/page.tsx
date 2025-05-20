@@ -8,14 +8,15 @@ import { BackgroundLines } from "@/components/ui/background-lines";
 import axios from "axios";
 import CryptoHoverEffect from "@/components/ui/card-hover-effect";
 
-// Type definition for blockchain item
+// Type definition for blockchain item from API
 interface BlockchainItem {
   blockchainId: string;
   name: string;
-  lowThreshold: number;
+  targetPrice: number;
   logo: string;
-  highThreshold: number;
+  alertMode: string;
   userId: string;
+  symbol: string;
   currentValue?: number;
 }
 
@@ -23,17 +24,12 @@ interface BlockchainItem {
 interface DashboardHoverItem {
   id: string;
   name: string;
-  thresholdMin: number;
-  thresholdMax: number;
+  targetPrice: number;
+  alertMode: string;
+  logo: string;
   userId: string;
+  symbol: string;
   currentValue: number;
-}
-
-// Type definition for update values
-interface UpdateValues {
-  lowThreshold: string;
-  highThreshold: string;
-  notifications: boolean;
 }
 
 function Dashboard() {
@@ -46,7 +42,6 @@ function Dashboard() {
 
   const [blockchains, setBlockchains] = useState<DashboardHoverItem[]>([]);
   
-
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,11 +53,11 @@ function Dashboard() {
             return {
               id: item.blockchainId,
               name: item.name,
-              thresholdMin: item.lowThreshold,
-              thresholdMax: item.highThreshold,
+              targetPrice: item.targetPrice,
+              alertMode: item.alertMode || "once", // Default to "once" if not provided
               logo: item.logo,
               userId: item.userId,
-              currentValue: 94000,
+              symbol: item.symbol || "",
             };
           });
           setBlockchains(data);
@@ -80,7 +75,6 @@ function Dashboard() {
 
     fetchBlockchains();
   }, []);
-
 
   return (
     <BackgroundLines>

@@ -101,6 +101,7 @@ export async function GET() {
       .collection("thresholds")
       .find({ userId: session.user.id })
       .toArray();
+      // console.log("Fetched thresholds:", thresholds);
     return NextResponse.json(thresholds);
   } catch (error) {
     console.error("Get thresholds error:", error);
