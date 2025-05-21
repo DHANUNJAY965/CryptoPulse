@@ -47,7 +47,7 @@ export function Navbar({ userName, onLogout, onSignIn }: NavbarProps) {
           <div className="flex items-center space-x-2 hover:cursor-pointer">
             <Image 
               src={logo}
-              alt="CryptoPulse Logo" 
+              alt="CryptoAlert Logo" 
               width={40} 
               height={40} 
               className="h-10 w-10 object-cover rounded-full"
@@ -57,7 +57,7 @@ export function Navbar({ userName, onLogout, onSignIn }: NavbarProps) {
               role="heading"
               aria-level={1}
             >
-              CryptoPulse
+              CryptoAlert
             </span>
           </div>
             </Link>

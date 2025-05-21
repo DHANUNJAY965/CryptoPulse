@@ -1,8 +1,8 @@
-# CryptoPulse: Cryptocurrency Tracking & Alert Platform
+# CryptoAlert: Cryptocurrency Tracking & Alert Platform
 
 ## Project Overview
 
-CryptoPulse is a comprehensive cryptocurrency tracking and notification platform built with Next.js, MongoDB, CoinGecko API, and Kestra for automated notifications.
+CryptoAlert is a comprehensive cryptocurrency tracking and notification platform built with Next.js, MongoDB, CoinGecko API, and Kestra for automated notifications.
 
 ## Features
 

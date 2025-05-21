@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 import logo from "@/app/images/logo.png"
 
 export const metadata: Metadata = {
-  title: 'CryptoPulse',
+  title: 'CryptoAlert',
   description: 'Smarter Alerts for Smarter Investors',
 };
 
