@@ -31,6 +31,7 @@ export function BlockchainCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      className=" hover:cursor-pointer"
     >
       <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <CardContent onClick={
