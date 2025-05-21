@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.png"
+import Link from 'next/link';
+
 
 interface NavbarProps {
   userName?: string;
@@ -41,7 +43,8 @@ export function Navbar({ userName, onLogout, onSignIn }: NavbarProps) {
     >
       <div className="container mx-auto px-4">
         <div className="h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+            <Link href="/" passHref>
+          <div className="flex items-center space-x-2 hover:cursor-pointer">
             <Image 
               src={logo}
               alt="CryptoPulse Logo" 
@@ -50,13 +53,14 @@ export function Navbar({ userName, onLogout, onSignIn }: NavbarProps) {
               className="h-10 w-10 object-cover rounded-full"
             />
             <span
-              className="text-xl font-bold bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent hover:text-primary transition-colors"
+              className="text-xl font-bold bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent hover:text-primary transition-colors "
               role="heading"
               aria-level={1}
             >
               CryptoPulse
             </span>
           </div>
+            </Link>
           <div className="flex items-center space-x-4">
             {session ? (
               <UserMenu userName={userName} onLogout={onLogout!} />
