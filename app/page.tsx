@@ -118,7 +118,7 @@ export default function Home() {
   };
 
   const handleSignIn = () => {
-    console.log("Sign in clicked");
+    // console.log("Sign in clicked");
     setShowAuthDialog(true);
   };
 

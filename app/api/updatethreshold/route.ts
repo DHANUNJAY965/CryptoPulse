@@ -10,7 +10,8 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { blockchainId, name, symbol, lowThreshold, highThreshold, notifications } = await req.json();
+    // const { blockchainId, name, symbol, lowThreshold, highThreshold, notifications } = await req.json();
+    const { blockchainId, name, symbol, alertMode, targetPrice, logo } = await req.json();
 
     const client = await clientPromise;
     const db = client.db("blockpulse");
@@ -35,14 +36,13 @@ export async function PUT(req: Request) {
         $set: {
           name,
           symbol,
-          lowThreshold,
-          highThreshold,
-          notifications,
+          alertMode,
+          targetPrice,
+          logo,
           updatedAt: new Date(),
         },
       }
     );
-
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { error: "Failed to update blockchain" },
