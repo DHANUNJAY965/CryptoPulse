@@ -11,7 +11,7 @@ export async function PUT(req: Request) {
     }
 
     // const { blockchainId, name, symbol, lowThreshold, highThreshold, notifications } = await req.json();
-    const { blockchainId, name, symbol, alertMode, targetPrice, logo } = await req.json();
+    const { blockchainId, name, symbol, alertMode, targetPrice, logo,priceWhenAlertSet } = await req.json();
 
     const client = await clientPromise;
     const db = client.db("blockpulse");
@@ -38,6 +38,7 @@ export async function PUT(req: Request) {
           symbol,
           alertMode,
           targetPrice,
+          priceWhenAlertSet,
           logo,
           updatedAt: new Date(),
         },

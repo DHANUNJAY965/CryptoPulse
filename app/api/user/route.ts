@@ -15,10 +15,10 @@ export async function POST(req: Request) {
     const data = await req.json();
     // console.log("Received data:", data);
     
-    const { blockchainId, name, symbol,logo, targetPrice, alertMode } = data;
+    const { blockchainId, name, symbol,logo, targetPrice, alertMode,priceWhenAlertSet } = data;
       console.log(logo);
     // Validate required fields
-    if (!blockchainId || !logo || !name || !symbol || targetPrice === undefined || alertMode === undefined) {
+    if (!blockchainId || !logo || !name || !symbol || targetPrice === undefined || alertMode === undefined || priceWhenAlertSet=== undefined) {
       // console.log("Missing required fields:", { blockchainId, name, symbol, lowThreshold, highThreshold });
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -62,6 +62,7 @@ export async function POST(req: Request) {
       symbol,
       logo,
       targetPrice: Number(targetPrice),
+      priceWhenAlertSet: Number(priceWhenAlertSet),
       alertMode,
       createdAt: new Date(),
     };
