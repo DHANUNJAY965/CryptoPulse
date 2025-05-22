@@ -28,8 +28,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "No alerts to check." });
   }
 
-  const uniqueTokens = [...new Set(alerts.map((a) => a.blockchainId))];
-
+  const uniqueTokens = Array.from(new Set(alerts.map((a) => a.blockchainId)));
+  if (!uniqueTokens.length) {
+    return NextResponse.json({ message: "No unique tokens found." });
+  }
   const { data: prices } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price",
     {
