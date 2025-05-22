@@ -45,17 +45,22 @@ export async function POST(req: Request) {
   for (const alert of alerts) {
     const currentPrice = prices[alert.blockchainId]?.usd;
     const targetPrice = parseFloat(alert.targetPrice);
+    const priceWhenAlertSet = parseFloat(alert.priceWhenAlertSet);
 
     if (!currentPrice) continue;
 
-    const priceMatch =
-      Number(currentPrice.toFixed(2)) === Number(targetPrice.toFixed(2));
-
-    console.log(
-      `Checking alert for ${alert.name}: current price is $${currentPrice}, target price is $${targetPrice}, match: ${priceMatch}`
+    // Determine if the target price has been crossed
+    const hasTargetBeenReached = checkIfTargetReached(
+      priceWhenAlertSet,
+      targetPrice,
+      currentPrice
     );
 
-    if (!priceMatch) continue;
+    console.log(
+      `Checking alert for ${alert.name}: current price is $${currentPrice}, target price is $${targetPrice}, price when set: $${priceWhenAlertSet}, target reached: ${hasTargetBeenReached}`
+    );
+
+    if (!hasTargetBeenReached) continue;
 
     const now = new Date();
     const lastSent = alert.updatedAt ? new Date(alert.updatedAt) : null;
@@ -93,25 +98,60 @@ export async function POST(req: Request) {
   });
 }
 
+function checkIfTargetReached(
+  priceWhenSet: number,
+  targetPrice: number,
+  currentPrice: number
+): boolean {
+  // If target price is higher than the price when alert was set,
+  // we're watching for price to go UP (bullish alert)
+  if (targetPrice > priceWhenSet) {
+    return currentPrice >= targetPrice;
+  }
+  // If target price is lower than the price when alert was set,
+  // we're watching for price to go DOWN (bearish alert)
+  else if (targetPrice < priceWhenSet) {
+    return currentPrice <= targetPrice;
+  }
+  // If target price equals the price when set (edge case),
+  // check for exact match with some tolerance
+  else {
+    const tolerance = 0.01; // 1 cent tolerance
+    return Math.abs(currentPrice - targetPrice) <= tolerance;
+  }
+}
+
 async function sendEmail(alert: any, currentPrice: number) {
+  const priceWhenSet = parseFloat(alert.priceWhenAlertSet);
+  const targetPrice = parseFloat(alert.targetPrice);
+  const isUpwardAlert = targetPrice > priceWhenSet;
+  const priceDirection = isUpwardAlert ? "📈 Above" : "📉 Below";
+  const alertType = isUpwardAlert ? "Bullish" : "Bearish";
+
   const mailOptions = {
     from: process.env.MAIL_USER,
     to: alert.email,
-    subject: `📈 ${alert.name} hit $${currentPrice}`,
+    subject: `${priceDirection} ${alert.name} hit $${currentPrice}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
-        <h2 style="text-align: center; color: #333;">🚨 Crypto Price Alert</h2>
+        <h2 style="text-align: center; color: #333;">🚨 Crypto Price Alert - ${alertType}</h2>
         <div style="text-align: center; margin: 20px 0;">
           <img src="${alert.logo}" alt="${alert.name}" width="60" style="border-radius: 10px;" />
           <h3 style="margin: 10px 0;">${alert.name} (${alert.symbol.toUpperCase()})</h3>
         </div>
-        <p style="font-size: 16px; color: #444;">🎯 <b>Target Price Reached:</b> <span style="color: green;">$${alert.targetPrice}</span></p>
+        <p style="font-size: 16px; color: #444;">🎯 <b>Target Price:</b> <span style="color: ${isUpwardAlert ? 'green' : 'red'};">$${alert.targetPrice}</span></p>
         <p style="font-size: 16px; color: #444;">📊 <b>Current Price:</b> <span style="color: blue;">$${currentPrice}</span></p>
+        <p style="font-size: 16px; color: #444;">📌 <b>Price When Alert Set:</b> <span style="color: #666;">$${alert.priceWhenAlertSet}</span></p>
         <p style="font-size: 16px; color: #444;">🔁 <b>Alert Mode:</b> ${alert.alertMode}</p>
+        <div style="background-color: ${isUpwardAlert ? '#e8f5e8' : '#ffe8e8'}; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; font-weight: bold; color: ${isUpwardAlert ? '#2e7d32' : '#c62828'};">
+            ${isUpwardAlert ? '🚀' : '📉'} Price has ${isUpwardAlert ? 'risen above' : 'fallen below'} your target of $${alert.targetPrice}!
+          </p>
+        </div>
         <hr style="margin: 20px 0;" />
         <p style="font-size: 14px; color: #777; text-align: center;">
           You received this alert because you set a price threshold on 
-          <a href="https://crypto-pulse-hack.vercel.app/" style="color: #777; text-decoration: underline;"><b>CryptoAlert</b></a>.
+          <b>CryptoAlert</b></a>.
         </p>
         <p style="font-size: 14px; color: #777; text-align: center; margin-top: 10px;">
           If you don't need any more alerts for this coin, please delete or deactivate this alert through the 
@@ -128,4 +168,3 @@ async function sendEmail(alert: any, currentPrice: number) {
     throw error; // allow outer try-catch to handle it
   }
 }
-
