@@ -5,7 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import bcrypt from "bcryptjs";
-import { NextAuthOptions } from "next-auth"; // Import NextAuthOptions for proper typing
+import { NextAuthOptions } from "next-auth"; 
 import { ObjectId } from "mongodb";
 
 // Extend NextAuth session to include the 'id' field
