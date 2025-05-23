@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 
-// Type definition for blockchain item from API
+
 interface BlockchainItem {
   blockchainId: string;
   name: string;
@@ -25,7 +25,7 @@ interface BlockchainItem {
   currentValue?: number;
 }
 
-// Type definition for dashboard item (used in hover effect)
+
 interface DashboardHoverItem {
   id: string;
   name: string;

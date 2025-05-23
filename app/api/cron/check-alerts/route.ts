@@ -167,6 +167,6 @@ async function sendEmail(alert: any, currentPrice: number) {
     await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error("Error sending mail:", error);
-    throw error; // allow outer try-catch to handle it
+    throw error;
   }
 }

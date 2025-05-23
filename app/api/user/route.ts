@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     
     const { blockchainId, name, symbol,logo, targetPrice, alertMode,priceWhenAlertSet } = data;
       console.log(logo);
-    // Validate required fields
+   
     if (!blockchainId || !logo || !name || !symbol || targetPrice === undefined || alertMode === undefined || priceWhenAlertSet=== undefined) {
       // console.log("Missing required fields:", { blockchainId, name, symbol, lowThreshold, highThreshold });
       return NextResponse.json(
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const client = await clientPromise;
     const db = client.db("blockpulse");
     
-    // Check if blockchain already exists in user's watchlist
+   
     const existingBlockchain = await db.collection("thresholds").findOne({
       userId: session.user.id,
       blockchainId: blockchainId,
