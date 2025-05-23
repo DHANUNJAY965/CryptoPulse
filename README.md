@@ -82,26 +82,58 @@ KESTRA_API_ENDPOINT=your_kestra_endpoint
 ## Project Structure
 ```
 cryptopulse/
-├── components/
-│   ├── Layout/
-│   ├── Crypto/
-│   └── Animations/
-├── pages/
+├── app/
 │   ├── api/
 │   │   ├── auth/
-│   │   └── crypto/
+│   │   ├── blockchains/
+│   │   ├── coins/
+│   │   ├── cron/
+│   │   ├── updatethreshold/
+│   │   ├── user/
+│   │   └── userthresholds/
 │   ├── dashboard/
+│   │   └── page.tsx
 │   ├── explore/
-│   └── crypto/
+│   │   └── page.tsx
+│   ├── [cryptoId]/
+│   │   └── page.jsx
+│   ├── models/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/
+│   ├── blockchain/
+│   ├── ui/
+│   ├── Navbar.tsx
+│   ├── SearchBar.tsx
+│   ├── ThresholdForm.tsx
+│   ├── auth-dialog.tsx
+│   ├── user-menu.tsx
+│   ├── theme-provider.tsx
+│   ├── theme-toggle.tsx
+│   └── ClientSessionProvider.tsx
+├── public/
+│   ├── Analytics.png
+│   ├── AlertDashboard.png
+│   ├── cryptoalert.png
+│   └── logo.png
 ├── lib/
-│   ├── mongodb.js
-│   ├── coingecko.js
-│   └── kestra-workflow.js
-├── models/
-│   ├── User.js
-│   └── Watchlist.js
-└── workflows/
-    └── crypto-notification.yml
+│   ├── api.ts
+│   ├── cache.ts
+│   ├── mongodb.ts
+│   └── utils.ts
+├── hooks/
+│   ├── useDebounce.ts
+│   ├── use-toast.ts
+│   └── useBlockchainSearch.ts
+├── types/
+│   └── blockchain.ts
+├── kestra/
+│   └── crypto-price-monitor.yaml
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── ... (other config and system files)
 ```
 
 ## Key Components
@@ -147,20 +179,6 @@ triggers:
     config:
       cron: "*/5 * * * *"
 ```
-
-### 4. MongoDB Schema
-```javascript
-// models/Watchlist.js
-const watchlistSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  cryptoId: String,
-  thresholdType: {
-    type: String,
-    enum: ['above', 'below', 'between']
-  },
-  thresholdValue: Number,
-  notificationMethod: ['email', 'sms']
-});
 ```
 
 ## Running the Project
