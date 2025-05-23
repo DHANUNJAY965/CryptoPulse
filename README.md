@@ -14,7 +14,7 @@ CryptoAlert is a comprehensive cryptocurrency tracking and notification platform
 
 ## Screenshots
 
-- Dashboard Overview
+- Landing Page
   <img width="1470" alt="Screenshot 2024-12-02 at 3 56 05 PM" src="https://github.com/user-attachments/assets/b1b4a4f0-fdd1-40e4-9249-3897d1d65277">
 
 - Crypto Explore Page
@@ -22,6 +22,12 @@ CryptoAlert is a comprehensive cryptocurrency tracking and notification platform
 
 - Analytics
   <img width="1470" alt="Screenshot 2024-12-02 at 3 57 28 PM" src="https://github.com/user-attachments/assets/07571d82-3898-4ae1-8d6a-c1dd33f46abc">
+
+- **CryptAlert Setup**  
+  <img width="1470" alt="Dashboard Screenshot" src="/cryptoalert.png">
+
+- **Alert Dashboard Overview**  
+  <img width="1470" alt="Dashboard Screenshot" src="/AlertDashboard.png">
 
 
 ## 🛠 Tech Stack
