@@ -38,7 +38,7 @@ export default function Home() {
 
       {/* Main content */}
       <div className="relative z-20 flex flex-col items-center justify-center flex-1 min-h-[calc(100vh-4rem)] text-center px-4">
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 to-neutral-500 dark:from-neutral-50 dark:to-neutral-400">
+        <h1 className=" hidden md:block text-4xl sm:text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 to-neutral-500 dark:from-neutral-50 dark:to-neutral-400">
           CryptoAlert
         </h1>
         <p className="mt-4 font-normal text-base sm:text-lg md:text-xl text-neutral-700 dark:text-neutral-300 max-w-lg">
