@@ -25,7 +25,7 @@ CryptoAlert is a comprehensive cryptocurrency tracking and notification platform
 
 - **CryptAlert Setup**  
   <img width="1470" alt="Dashboard Screenshot" src="/public/cryptoalert.png">
-![Super Admin Dashboard](public/superadmin.png)
+  
 - **Alert Dashboard Overview**  
   <img width="1470" alt="Dashboard Screenshot" src="/public/AlertDashboard.png">
 
